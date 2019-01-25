@@ -8,19 +8,33 @@ public class CameraControls : MonoBehaviour
     public float targetOrtho;
     public float smoothSpeed = 2.0f;
     public float minOrtho = 1.0f;
-    public float maxOrtho = 20.0f;
-
+    private float maxOrtho = 100.0f;
 
     public float mouseSensitivity = 1.0f;
 
-    public float worldWidth = 100.0f;
-    public float worldHeight = 75.0f;
+    public Transform background;
 
     private Vector3 lastPosition;
+
+    private float cameraWidth;
+    private float cameraHeight;
+    private float aspect;
+
+    private float gameWidth;
+    private float gameHeight;
 
     void Start()
     {
         targetOrtho = Camera.main.orthographicSize;
+
+        aspect = Camera.main.aspect;
+        cameraHeight = Camera.main.orthographicSize * 2;
+        cameraWidth = cameraHeight * aspect;
+
+        gameWidth = background.localScale.x;
+        gameHeight = background.localScale.y;
+
+        maxOrtho = Mathf.Min(gameHeight / 2, (gameWidth / aspect ) / 2 );
     }
 
     void Update()
@@ -35,6 +49,8 @@ public class CameraControls : MonoBehaviour
 
         Camera.main.orthographicSize = Mathf.MoveTowards(Camera.main.orthographicSize, targetOrtho, smoothSpeed * Time.deltaTime);
 
+        cameraWidth = Camera.main.orthographicSize * 2;
+        cameraHeight = cameraWidth * aspect;
 
         // Pan
         if (Input.GetMouseButtonDown(0))

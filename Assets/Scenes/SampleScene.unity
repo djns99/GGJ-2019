@@ -155,10 +155,8 @@ MonoBehaviour:
   targetOrtho: 0
   smoothSpeed: 10
   minOrtho: 1
-  maxOrtho: 200
   mouseSensitivity: 1
-  worldWidth: 100
-  worldHeight: 75
+  background: {fileID: 546063203}
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
