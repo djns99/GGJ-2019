@@ -39,7 +39,7 @@ public class Wall : MonoBehaviour
 
     //}
 
-    //[HideInInspector]
+    [HideInInspector]
     public enum Neighbour {
         UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3
     }
@@ -48,20 +48,20 @@ public class Wall : MonoBehaviour
     public int x;
     public int y;
 
-    //[HideInInspector]
+    [HideInInspector]
     public List<Wall> neighbours;
-    //[HideInInspector]
+    [HideInInspector]
     public HashSet<Wall> dependants = new HashSet<Wall>(); // List of all nodes that rely on this node existing
-    //[HideInInspector]
+    [HideInInspector]
     public Vector3 dependantLocSum = new Vector2(); // Average position of connected mass
 
-    //[HideInInspector]
+    [HideInInspector]
     public HashSet<Wall> criticalSupports = new HashSet<Wall>(); // Set of all supports that are critical to this node existing
-    //[HideInInspector]
+    [HideInInspector]
     public bool dead = false;
-    //[HideInInspector]
+    [HideInInspector]
     public bool scheduledForDeath = false;
-    //[HideInInspector]
+    [HideInInspector]
     public bool root = false;
 
     public float maxTorque = 100.0f;
@@ -70,23 +70,23 @@ public class Wall : MonoBehaviour
 
     public void Update()
     {
-        if (dependants.Count > 0 && criticalSupports.Count == 0)
-        {
-            // Root
-            GetComponent<Renderer>().material.color = Color.black;
-        }
-        else if (dependants.Count > 0)
-        {
-            // Under tension
-            GetComponent<Renderer>().material.color = Color.red;
-        }
-        else if (criticalSupports.Count > 0) {
-            // Unstable
-            GetComponent<Renderer>().material.color = Color.yellow;
-        } else {
-            // Secure
-            GetComponent<Renderer>().material.color = Color.white;
-        }
+        //if (dependants.Count > 0 && criticalSupports.Count == 0)
+        //{
+        //    // Root
+        //    GetComponent<Renderer>().material.color = Color.black;
+        //}
+        //else if (dependants.Count > 0)
+        //{
+        //    // Under tension
+        //    GetComponent<Renderer>().material.color = Color.red;
+        //}
+        //else if (criticalSupports.Count > 0) {
+        //    // Unstable
+        //    GetComponent<Renderer>().material.color = Color.yellow;
+        //} else {
+        //    // Secure
+        //    GetComponent<Renderer>().material.color = Color.white;
+        //}
 
         if (dead)
         {

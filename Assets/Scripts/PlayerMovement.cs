@@ -128,7 +128,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     //Debug.Log("Num neighbours: " + neighbours.Count.ToString());
                     // Add 0.5f to offsets to centre cube in middle of 1x1
-                    GameObject wallObject = Instantiate(wallPrefab, new Vector3(x + 0.5f, y + 0.5f), Quaternion.identity);
+                    GameObject wallObject = Instantiate(wallPrefab, new Vector3(x + 0.5f, y + 0.5f, -(((float)yIdx / 10.0f) + ((float)xIdx / 1000.0f))), Quaternion.identity);
                     Wall wall = wallObject.GetComponent<Wall>();
 
                     foreach (Wall neighbour in neighbours) {
