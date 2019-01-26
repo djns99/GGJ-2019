@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/TopDownTurrets/Scenes/Example Scene.unity
-    guid: 00000000000000000000000000000000
+    path: Assets/Scenes/MainScene.unity
+    guid: 7318efc3ac1b5b34489cc446a5b13ffd
   m_configObjects: {}

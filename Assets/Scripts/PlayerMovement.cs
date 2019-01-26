@@ -8,57 +8,147 @@ public class PlayerMovement : MonoBehaviour
     public GameObject wallPrefab;
     public GameObject wallFailedPrefab;
     public Transform background;
+
     public float speed = 20.0f;
+
+    public bool player1 = true;
+
+    public PlayerMovement other;
 
     private Wall[,] grid;
     private int xOff;
     private int yOff;
 
+    
+    private const int NUM_IN_POOL = 30;
+    private GameObject[] failedPool = new GameObject[NUM_IN_POOL];
+    private int nextIndex = 0;
+    private SpriteRenderer spriteRenderer;
+
+
+    public bool gameStopped = false;
+
+    private string upKey, downKey, leftKey, rightKey;
+
+    private float left, right, up, down;
+
+    private void Awake()
+    {
+        float aspect = Camera.main.aspect;
+        float cameraHeight = Camera.main.orthographicSize * 2;
+        float cameraWidth = cameraHeight * aspect;
+
+        left = -cameraWidth / 2;
+        right = cameraWidth / 2;
+        up = cameraHeight / 2 + Camera.main.transform.position.y;
+        down = background.localPosition.y - background.localScale.y / 2;
+
+        grid = new Wall[(int)cameraWidth, (int)up - (int)down];
+        xOff = (int)cameraWidth / 2;
+        yOff = -Mathf.FloorToInt(down);
+    }
 
     private void Start()
     {
-        grid = new Wall[(int)background.localScale.x, (int)background.localScale.y];
-        xOff = (int)background.localScale.x / 2;
-        yOff = (int)background.localScale.y / 2 - (int)background.localPosition.y;
+        for (int i = 0; i < NUM_IN_POOL; i++) {
+            GameObject failed = Instantiate(wallFailedPrefab);
+            failed.SetActive(false);
+            failed.GetComponent<DespawnDestroyedWall>().persist = true;
+            failedPool[i] = failed;
+        }
 
-        Debug.Assert(grid.GetLength(0) == background.localScale.x);
-        Debug.Assert(grid.GetLength(1) == background.localScale.y);
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (player1)
+        {
+            upKey = "w";
+            downKey = "s";
+            leftKey = "a";
+            rightKey = "d";
+        }
+        else {
+            upKey = "up";
+            downKey = "down";
+            leftKey = "left";
+            rightKey = "right";
+        }
+
+        for (int x = 0; x < grid.GetLength(0); x++) {
+            CheckWall(x - xOff, 0 - yOff);
+        }
     }
 
     void Update()
     {
-        MoveForward(); // Player Movement
+        if (!gameStopped)
+        {
+            MoveForward(); // Player Movement
+        }
     }
 
     void FixedUpdate()
     {
-        //Vector3 pos = transform.localPosition;
-        //pos.x = Mathf.Round(pos.x - 0.5f) + 0.5f;
-        //transform.localPosition = pos;
+        Vector3 pos = transform.localPosition;
+        pos.x = Mathf.Round(pos.x - 0.5f) + 0.5f;
+        transform.localPosition = pos;
+    }
+
+    public int GetPlayerScoreTotalTiles() {
+        int count = 0;
+        for (int x = 0; x < grid.GetLength(0); x++) {
+            for (int y = 1; y < grid.GetLength(1); y++)
+            {
+                if (grid[x, y] != null)
+                    count++;
+            }
+        }
+        return count;
+    }
+
+    public int TotalGridsquares() {
+        return grid.GetLength(0) * (grid.GetLength(1) - 1);
     }
 
     void MoveForward()
     {
-        if (Input.GetKey("up"))
+        float step = 1;// Mathf.Clamp01(speed * Time.deltaTime);
+
+        int xLast = Mathf.RoundToInt(transform.localPosition.x - 0.5f);
+        int yLast = Mathf.RoundToInt(transform.localPosition.y - 0.5f);
+
+        if (Input.GetKey(upKey) && transform.localPosition.y + step < up)
         {
-            transform.Translate(0, 1, 0);
-            CheckWall();
+            transform.Translate(0, step, 0);
         }
-        else if (Input.GetKey("down"))
+        else if (Input.GetKey(downKey) && transform.localPosition.y - step > down)
         {
-            // TODO Jump down entire level
-            transform.Translate(0, -1, 0);
-            // No wall going down
+            transform.Translate(0, -step, 0);
         }
-        else if (Input.GetKey("left"))
+
+        int xNew = Mathf.RoundToInt(transform.localPosition.x - 0.5f);
+        int yNew = Mathf.RoundToInt(transform.localPosition.y - 0.5f);
+
+        if (xNew != xLast || yNew != yLast)
         {
-            transform.Translate(-speed * Time.deltaTime, 0, 0);
-            CheckWall();
+            CheckWall(xLast, yLast);
         }
-        else if (Input.GetKey("right"))
+
+        if (Input.GetKey(leftKey) && transform.localPosition.x - step > left)
         {
-            transform.Translate(speed * Time.deltaTime, 0, 0);
-            CheckWall();
+            transform.Translate(-step, 0, 0);
+            spriteRenderer.flipX = true;
+        }
+        else if (Input.GetKey(rightKey) && transform.localPosition.x + step < right)
+        {
+            transform.Translate(step, 0, 0);
+            spriteRenderer.flipX = true;
+        }
+
+        xNew = Mathf.RoundToInt(transform.localPosition.x - 0.5f);
+        yNew = Mathf.RoundToInt(transform.localPosition.y - 0.5f);
+
+        if (xNew != xLast || yNew != yLast) {
+            CheckWall(xLast, yLast);
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -102,48 +192,60 @@ public class PlayerMovement : MonoBehaviour
         return neighbours;
     }
 
-    void CheckWall() {
-        if (Input.GetKey("space"))
+    GameObject getFailed() {
+        nextIndex = (nextIndex + 1) % NUM_IN_POOL;
+        failedPool[nextIndex].SetActive(false); // Disable if not already
+        return failedPool[nextIndex];
+    }
+
+    void CheckWall(int x, int y) {
+        int xIdx = x + xOff;
+        int yIdx = y + yOff;
+
+        if (xIdx < 0 || yIdx < 0 || xIdx >= grid.GetLength(0) || yIdx >= grid.GetLength(1))
         {
-            int x = Mathf.RoundToInt(transform.localPosition.x - 0.5f);
-            int y = Mathf.RoundToInt(transform.localPosition.y - 1.5f);
+            return;
+        }
 
-            int xIdx = x + xOff;
-            int yIdx = y + yOff;
+        int half = player1 ? 1 : 0; // Half they are not allowed in
+        int quarterSize = Mathf.CeilToInt(grid.GetLength(0) / 4.0f);
+        if (yIdx == 0 && (xIdx >= quarterSize * half) && xIdx < (quarterSize * half + quarterSize * 3)) {
+            return;
+        }
 
-            if (xIdx < 0 || yIdx < 0 || xIdx >= grid.GetLength(0) || yIdx >= grid.GetLength(1))
+        //Debug.Log("x:" + xIdx.ToString());
+        //Debug.Log(yIdx);
+
+        // Only add if no existing wall
+        if (grid[xIdx, yIdx] == null)
+        {
+            List<Wall> neighbours = GetNeighbours(grid, xIdx, yIdx);
+            if (neighbours.Count > 0 || yIdx == 0)
             {
-                return;
+                //Debug.Log("Num neighbours: " + neighbours.Count.ToString());
+                // Add 0.5f to offsets to centre cube in middle of 1x1
+                GameObject wallObject = Instantiate(wallPrefab, new Vector3(x + 0.5f, y + 0.5f, -(((float)yIdx / 10.0f) + ((float)xIdx / 1000.0f))), Quaternion.identity);
+                Wall wall = wallObject.GetComponent<Wall>();
+
+                foreach (Wall neighbour in neighbours) {
+                    neighbour.UpdateNeighbours(wall);
+                }
+
+                //Debug.Log("Neighbours: " + neighbours.Count.ToString());
+                wall.SetupWall(neighbours, yIdx == 0, grid, xIdx, yIdx);
+                grid[xIdx, yIdx] = wall;
+
+                if (other.grid[xIdx, yIdx] != null) {
+                    other.grid[xIdx, yIdx].DestroyWall(true);
+                }
             }
-
-
-            //Debug.Log("x:" + xIdx.ToString());
-            //Debug.Log(yIdx);
-
-            // Only add if no existing wall
-            if (grid[xIdx, yIdx] == null)
+            else
             {
-                List<Wall> neighbours = GetNeighbours(grid, xIdx, yIdx);
-                if (neighbours.Count > 0 || yIdx == 0)
-                {
-                    //Debug.Log("Num neighbours: " + neighbours.Count.ToString());
-                    // Add 0.5f to offsets to centre cube in middle of 1x1
-                    GameObject wallObject = Instantiate(wallPrefab, new Vector3(x + 0.5f, y + 0.5f, -(((float)yIdx / 10.0f) + ((float)xIdx / 1000.0f))), Quaternion.identity);
-                    Wall wall = wallObject.GetComponent<Wall>();
-
-                    foreach (Wall neighbour in neighbours) {
-                        neighbour.UpdateNeighbours(wall);
-                    }
-
-                    //Debug.Log("Neighbours: " + neighbours.Count.ToString());
-                    wall.SetupWall(neighbours, yIdx == 0, grid, xIdx, yIdx);
-                    grid[xIdx, yIdx] = wall;
-                }
-                else
-                {
-                    // Fail to place here
-                    Instantiate(wallFailedPrefab, new Vector3(x + 0.5f, y + 0.5f), Quaternion.identity);
-                }
+                // Fail to place here
+                GameObject prefab = getFailed();
+                // Reset position
+                prefab.transform.position = new Vector3(x + 0.5f, y + 0.5f);
+                prefab.SetActive(true);
             }
         }
     }

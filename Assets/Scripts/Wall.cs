@@ -120,7 +120,7 @@ public class Wall : MonoBehaviour
 
     public void SetupWall(List<Wall> neighbours, bool root, Wall[,] grid, int x, int y) {
 
-        Debug.Assert(!dependants.Contains(null));
+        
 
         this.neighbours = neighbours;
         //foreach (Wall wall in neighbours) {
@@ -136,11 +136,7 @@ public class Wall : MonoBehaviour
         criticalSupports.Clear();
         dependantLocSum.Set(0, 0, 0);
 
-        Debug.Assert(!dependants.Contains(null));
-
-        CalcCriticalSupports(null, true);
-
-        Debug.Assert(!dependants.Contains(null));
+        CalcCriticalSupports();
     }
 
     public void UpdateNeighbours(Wall newNeighbour) {
@@ -150,7 +146,7 @@ public class Wall : MonoBehaviour
     }
 
     public void AddDependant(Wall dependant) {
-        Debug.Assert(!dependants.Contains(null));
+        
 
         Debug.Assert(dependant != null);
         dependants.Add(dependant);
@@ -158,11 +154,11 @@ public class Wall : MonoBehaviour
 
         Debug.Assert(!criticalSupports.Contains(dependant) && !dependant.dependants.Contains(this));
 
-        Debug.Assert(!dependants.Contains(null));
+        
 
         CheckCollapse();
 
-        Debug.Assert(!dependants.Contains(null));
+        
     }
 
     public void RemoveDependant(Wall dependant) {
@@ -185,21 +181,19 @@ public class Wall : MonoBehaviour
 
     private void InheritNeighbourSupports(Wall wall) {
 
-        Debug.Assert(!dependants.Contains(null));
+        
 
         foreach (Wall support in wall.criticalSupports) {
             criticalSupports.Add(support);
         }
 
-        Debug.Assert(!dependants.Contains(null));
+        
     }
 
-    private void CalcCriticalSupports(Wall callee = null, bool print = true) {
+    private void CalcCriticalSupports(Wall callee = null, bool print = false) {
         // Roots never have critcal supports
         if (print)
             Debug.Log("New level at: " + transform.localPosition.ToString());
-
-        Debug.Assert(!dependants.Contains(null));
 
         if (root)
         {
@@ -209,28 +203,28 @@ public class Wall : MonoBehaviour
                 foreach (Wall neighbour in neighbours)
                 {
                     Debug.Log("Root Calling: " + neighbour.transform.localPosition.ToString());
-                    neighbour.CalcCriticalSupports(this, print);
+                    neighbour.CalcCriticalSupports(this);
                 }
                 Debug.Log("Root with neighbours: " + neighbours.Count.ToString());
             }
             return;
         }
 
-        Debug.Assert(!dependants.Contains(null));
+        
 
         int oldSupports = criticalSupports.Count;
 
-        Debug.Assert(!dependants.Contains(null));
+        
 
         foreach (Wall support in criticalSupports) {
             support.RemoveDependant(this);
         }
 
-        Debug.Assert(!dependants.Contains(null));
+        
 
         criticalSupports.Clear();
 
-        Debug.Assert(!dependants.Contains(null));
+        
 
         Debug.Assert(neighbours.Count > 0);
 
@@ -239,7 +233,7 @@ public class Wall : MonoBehaviour
         InheritNeighbourSupports(sole);
         criticalSupports.Add(sole);
 
-        Debug.Assert(!dependants.Contains(null));
+        
 
         // Intersect with all other neighbours to find common critical supports
         for (int i = 1; i < neighbours.Count; i++) {
@@ -250,7 +244,7 @@ public class Wall : MonoBehaviour
             }
         }
 
-        Debug.Assert(!dependants.Contains(null));
+        
 
         // Tell all dependant children they are dependant
         foreach (Wall support in criticalSupports) {
@@ -258,24 +252,19 @@ public class Wall : MonoBehaviour
             support.AddDependant(this);
         }
 
-        Debug.Assert(!dependants.Contains(null));
-
         if (neighbours.Count > 1 && (oldSupports > criticalSupports.Count || callee == null))
         {
             if (print)
                 Debug.Log("Critical supports: " + criticalSupports.Count + " < " + oldSupports.ToString());
             // Recalculate neighbours since we may have joint two roots
-
-            Debug.Assert(!dependants.Contains(null));
-
             foreach (Wall neighbour in neighbours)
             {
                 if (print)
                     Debug.Log("Calling: " + neighbour.transform.localPosition.ToString());
-                neighbour.CalcCriticalSupports(this, print);
+                neighbour.CalcCriticalSupports(this);
             }
 
-            Debug.Assert(!dependants.Contains(null));
+            
         }
         else {
             if (print)
@@ -295,7 +284,7 @@ public class Wall : MonoBehaviour
 
     public void ReplaceWithFailed()
     {
-        Debug.Assert(!dependants.Contains(null));
+        
 
         foreach (Wall criticalSupport in criticalSupports) {
             if (criticalSupport.dependants.Contains(this))
@@ -308,12 +297,12 @@ public class Wall : MonoBehaviour
         criticalSupports.Clear();
         grid[x, y] = null;
 
-        Debug.Assert(!dependants.Contains(null));
+        
 
         RemoveFromNeighbours();
         neighbours.Clear();
 
-        Debug.Assert(!dependants.Contains(null));
+        
 
         dependants.Clear();
 
@@ -331,11 +320,11 @@ public class Wall : MonoBehaviour
         foreach (Wall backup in backups) {
             backup.ReplaceWithFailed();
         }
-        Debug.Assert(!dependants.Contains(null));
+        
         dependants.Clear();
         dependantLocSum.Set(0, 0, 0);
 
-        Debug.Assert(!dependants.Contains(null));
+        
     }
 
     private List<Wall> FindRoots() {
