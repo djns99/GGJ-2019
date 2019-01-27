@@ -20,8 +20,8 @@ public class ScoreScipt : MonoBehaviour
 
 
     public int Winner() {
-        float player1Score = player1.GetPlayerScoreTotalTiles();
-        float player2Score = player2.GetPlayerScoreTotalTiles();
+        float player1Score = player1.GetPlayerScoreSurrounded();
+        float player2Score = player2.GetPlayerScoreSurrounded();
         if (player1Score == player2Score)
             return 0;
         else if (player1Score > player2Score)
@@ -34,8 +34,8 @@ public class ScoreScipt : MonoBehaviour
     void Update()
     {
         float percentage = slider.value;
-        float player1Score = player1.GetPlayerScoreTotalTiles();
-        float player2Score = player2.GetPlayerScoreTotalTiles();
+        float player1Score = player1.GetPlayerScoreSurrounded();
+        float player2Score = player2.GetPlayerScoreSurrounded();
         float targetPercentage;
 
         if (player1Score + player2Score == 0)

@@ -105,8 +105,70 @@ public class PlayerMovement : MonoBehaviour
         return count;
     }
 
+    private void TraverseFalse(Vector2Int vec, HashSet<Vector2Int> invalidSquares) {
+
+        Wall[] neighbours = new Wall[4];
+        Stack<Vector2Int> toProcess = new Stack<Vector2Int>();
+        toProcess.Push(vec);
+        invalidSquares.Add(vec);
+        while (toProcess.Count > 0) {
+            Vector2Int top = toProcess.Pop();
+
+            int x = top.x;
+            int y = top.y;
+
+            for (int i = -1; i < 2; i++)
+            {
+                for (int j = -1; j < 2; j++)
+                {
+                    if (Math.Abs(i) == Math.Abs(j) || x + i < 0 || y + j < 0 || x + i >= grid.GetLength(0) || y + j >= grid.GetLength(1))
+                    {
+                        continue;
+                    }
+
+                    Vector2Int newVec = new Vector2Int(x + i, y + j);
+                    if (grid[x + i, y + j] == null && !invalidSquares.Contains(newVec)) {
+                        toProcess.Push(newVec);
+                        invalidSquares.Add(newVec);
+                    }
+
+                }
+            }
+        }
+    }
+
+    public int GetPlayerScoreTotalArea()
+    {
+        HashSet<Vector2Int> invalidSquares = new HashSet<Vector2Int>();
+        for (int x = 0; x < grid.GetLength(0); x++)
+        {
+            for (int y = 0; y < grid.GetLength(1); y++)
+            {
+                if (x == 1 && y != 0 && y != grid.GetLength(1) - 1) {
+                    x = grid.GetLength(0) - 1;
+                }
+
+                if (y == 1 && x != 0 && x != grid.GetLength(0) - 1) {
+                    y = grid.GetLength(1) - 1;
+                }
+
+                // Not covered and not already traversed
+                Vector2Int vec = new Vector2Int(x, y);
+                if (grid[x, y] == null && !invalidSquares.Contains(vec)) 
+                    TraverseFalse(vec, invalidSquares);
+            }
+        }
+        return TotalGridsquares() - invalidSquares.Count;
+    }
+
+    public int GetPlayerScoreSurrounded()
+    {
+        // Surrounded area
+        return GetPlayerScoreTotalArea() - GetPlayerScoreTotalTiles();
+    }
+
     public int TotalGridsquares() {
-        return grid.GetLength(0) * (grid.GetLength(1) - 1);
+        return grid.GetLength(0) * grid.GetLength(1);
     }
 
     void MoveForward()
@@ -151,20 +213,20 @@ public class PlayerMovement : MonoBehaviour
             CheckWall(xLast, yLast);
         }
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            // Testing to stop 
-            Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            int x = Mathf.RoundToInt(pos.x - 0.5f) + xOff;
-            int y = Mathf.RoundToInt(pos.y - 0.5f) + yOff;
-            if (!(x < 0 || y < 0 || x >= grid.GetLength(0) || y >= grid.GetLength(1)))
-            {
-                if (grid[x, y] != null)
-                {
-                    grid[x, y].DestroyWall(true);
-                }
-            }
-        }
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    // Testing to stop 
+        //    Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //    int x = Mathf.RoundToInt(pos.x - 0.5f) + xOff;
+        //    int y = Mathf.RoundToInt(pos.y - 0.5f) + yOff;
+        //    if (!(x < 0 || y < 0 || x >= grid.GetLength(0) || y >= grid.GetLength(1)))
+        //    {
+        //        if (grid[x, y] != null)
+        //        {
+        //            grid[x, y].DestroyWall(true);
+        //        }
+        //    }
+        //}
 
     }
 

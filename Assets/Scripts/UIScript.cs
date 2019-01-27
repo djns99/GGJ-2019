@@ -20,7 +20,7 @@ public class UIScript : MonoBehaviour
 
     public void OnTimedClicked()
     {
-        timeScript.totalSeconds = 3.0f;
+        timeScript.totalSeconds = 300.0f;
         Time.timeScale = 1f;
     }
 }

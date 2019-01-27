@@ -682,10 +682,10 @@ RectTransform:
   m_Father: {fileID: 1053012882}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -747.5, y: -473.7}
-  m_SizeDelta: {x: 375.2, y: 39.9}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 212.5, y: 66.29999}
+  m_SizeDelta: {x: 375.2, y: 39.899994}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &317365252
 MonoBehaviour:
@@ -938,10 +938,10 @@ RectTransform:
   m_Father: {fileID: 1053012882}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -511.9}
-  m_SizeDelta: {x: 1920, y: 55.2}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 28.100006}
+  m_SizeDelta: {x: 0, y: 55.200012}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &397884071
 MonoBehaviour:
@@ -1099,7 +1099,7 @@ GameObject:
   - component: {fileID: 421923653}
   - component: {fileID: 421923652}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: Timed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1122,7 +1122,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 388, y: -187.1}
+  m_AnchoredPosition: {x: 400, y: -320}
   m_SizeDelta: {x: 567.7, y: 106.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &421923652
@@ -1613,6 +1613,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startColor: {r: 0, g: 0.80742407, b: 1, a: 1}
   endColor: {r: 0, g: 0.3627696, b: 1, a: 1}
+  startColorDay: {r: 1, g: 0, b: 0, a: 1}
+  endColorDay: {r: 0, g: 0, b: 1, a: 1}
+  cycleSeconds: 30
 --- !u!64 &546063200
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1838,6 +1841,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startColor: {r: 1, g: 0.654902, b: 0.27058825, a: 1}
   endColor: {r: 0.03315468, g: 0, b: 0.1981132, a: 1}
+  startColorDay: {r: 0, g: 0.8237746, b: 1, a: 1}
+  endColorDay: {r: 0, g: 0, b: 1, a: 1}
+  cycleSeconds: 30
 --- !u!64 &651029984
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1923,7 +1929,7 @@ GameObject:
   - component: {fileID: 664873946}
   - component: {fileID: 664873945}
   m_Layer: 5
-  m_Name: TextMeshPro Text
+  m_Name: Instructions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1945,8 +1951,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000022888, y: 63}
-  m_SizeDelta: {x: 1562.8, y: 169.4}
+  m_AnchoredPosition: {x: 0.000022888, y: 18.6}
+  m_SizeDelta: {x: 1562.8, y: 258.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &664873945
 MonoBehaviour:
@@ -1968,11 +1974,13 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: "How To Play:\nUsing arrow keys/WASD build your house starting from your
-    side of the road. Be careful though, if you have insufficient support your house
-    may topple. \n\nWatch out for the cannons launching deadly projectiles and your
-    mischievous neighbour who can undermine your construction and send you tumbling
-    to the ground"
+  m_text: "How To Play:\nUsing arrow keys/WASD each player builds their house starting
+    from their side of the road. Be careful though, if you have insufficient support
+    your house may topple. \n\nWatch out for the cannons launching deadly projectiles
+    and your mischievous neighbour who can undermine your construction and send you
+    tumbling to the ground.\n\nThe winner is the person who has the most free room
+    space when time runs out. So be careful, thicker walls makes for a more robust
+    structure but don't help your score."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2018,7 +2026,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 166
+  m_firstOverflowCharacterIndex: 340
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -2041,12 +2049,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 664873945}
-    characterCount: 323
+    characterCount: 508
     spriteCount: 0
-    spaceCount: 53
-    wordCount: 53
+    spaceCount: 88
+    wordCount: 87
     linkCount: 0
-    lineCount: 6
+    lineCount: 9
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 0
@@ -2903,7 +2911,7 @@ GameObject:
   - component: {fileID: 1138014818}
   - component: {fileID: 1138014820}
   m_Layer: 5
-  m_Name: TextMeshPro Text
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2948,7 +2956,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Shaky Foundation
+  m_text: Shaky Foundations
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3017,7 +3025,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 0}
-    characterCount: 16
+    characterCount: 17
     spriteCount: 0
     spaceCount: 1
     wordCount: 2
@@ -4676,7 +4684,7 @@ GameObject:
   - component: {fileID: 1789183657}
   - component: {fileID: 1789183656}
   m_Layer: 5
-  m_Name: Image
+  m_Name: FadeBack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4850,7 +4858,7 @@ GameObject:
   - component: {fileID: 1851296038}
   - component: {fileID: 1851296037}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: Endless
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4873,7 +4881,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -388, y: -187.1}
+  m_AnchoredPosition: {x: -400, y: -320}
   m_SizeDelta: {x: 567.7, y: 106.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1851296037
